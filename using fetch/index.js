@@ -38,7 +38,7 @@ const API_KEY =  "live_BICAt2EBGRp6AyCBGoX2NkPl9HJUofGc16GmMvAquuJlPH2zTmYcICeuy
     option.textContent = element.name;
     breedSelect.appendChild(option);
   });
-
+  console.log(breeds);
   display(breeds[0]);
 })();
 
@@ -61,6 +61,7 @@ breedSelect.addEventListener("change", display);
 
 async function display(e) {
   // alert(e.id);
+  try{
   Carousel.clear();
   infoDump.textContent = "";
   let optionSelected = "";
@@ -76,11 +77,27 @@ async function display(e) {
   );
   const data = await selectedBreed.json();
 
-  // infoDump.textContent = data[0].id;
+  let description = await fetch(`https://api.thecatapi.com/v1/breeds/${optionSelected}`,{
+    method : 'GET',
+    headers : {
+      "x-api-key": API_KEY,
+    }
+  })
+  description = await description.json();
+
+  const h3 = document.createElement("h3");
+  h3.textContent = description.description;
+  infoDump.appendChild(h3);
+
   data.forEach((ele) => {
     carouseCall(ele.url, ele.id, ele.id);
   });
+  console.log(data);
   Carousel.start();
+}catch(err){
+  console.log(err);
+}
+
 }
 
 function carouseCall(url, alt, id) {

@@ -70,7 +70,13 @@ async function display(e) {
     );
     const data = selectedBreed.data;
 
-    // infoDump.textContent = data[0].id;
+    let description = await axios.get(`https://api.thecatapi.com/v1/breeds/${optionSelected}`)
+      description = description.data;
+    
+    const h3 = document.createElement("h3");
+    h3.textContent = description.description;
+    infoDump.appendChild(h3);
+
     data.forEach((ele) => {
         carouseCall(ele.url, ele.id, ele.id);
     });
