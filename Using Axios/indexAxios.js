@@ -26,6 +26,7 @@ const API_KEY =  "live_BICAt2EBGRp6AyCBGoX2NkPl9HJUofGc16GmMvAquuJlPH2zTmYcICeuy
  *   by setting a default header with your API key so that you do not have to
  *   send it manually with all of your requests! You can also set a default base URL!
  */
+interceptors();
 (async function initialLoad() {
     try {
         const breedsData = await axios.get("https://api.thecatapi.com/v1/breeds", {
@@ -59,7 +60,7 @@ async function display(e) {
     let optionSelected = "";
     if (e.target && e.target.value) optionSelected = e.target.value;
     else optionSelected = e.id;
-    const selectedBreed = await fetch(
+    const selectedBreed = await axios.get(
         `https://api.thecatapi.com/v1/images/search?breed_ids=${optionSelected}&limit=7`,
         {
             header: {
@@ -67,7 +68,7 @@ async function display(e) {
             },
         }
     );
-    const data = await selectedBreed.json();
+    const data = selectedBreed.data;
 
     // infoDump.textContent = data[0].id;
     data.forEach((ele) => {
@@ -91,7 +92,6 @@ function carouseCall(url, alt, id) {
  * - Add a console.log statement to indicate when requests begin.
  * - As an added challenge, try to do this on your own without referencing the lesson material.
  */
-interceptors();
 
 function interceptors(){
     axios.interceptors.request.use(request => {
