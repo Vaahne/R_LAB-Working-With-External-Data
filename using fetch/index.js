@@ -12,8 +12,7 @@ const progressBar = document.getElementById("progressBar");
 const getFavouritesBtn = document.getElementById("getFavouritesBtn");
 
 // Step 0: Store your API key here for reference and easy access.
-const API_KEY =
-  "live_BICAt2EBGRp6AyCBGoX2NkPl9HJUofGc16GmMvAquuJlPH2zTmYcICeuyGwc4ejA";
+const API_KEY =  "live_BICAt2EBGRp6AyCBGoX2NkPl9HJUofGc16GmMvAquuJlPH2zTmYcICeuyGwc4ejA";
 
 /**
  * 1. Create an async function "initialLoad" that does the following:
@@ -26,6 +25,7 @@ const API_KEY =
 
 (async function initialLoad() {
   const breedsData = await fetch("https://api.thecatapi.com/v1/breeds", {
+    method: 'GET',
     headers: {
       "x-api-key": API_KEY,
     },
