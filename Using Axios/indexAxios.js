@@ -33,7 +33,19 @@ interceptors();
             headers: {
                 "x-api-key": API_KEY,
             },
-        });
+            onDownloadProgress: function (progressEvent) {
+                // Calculate the progress percentage
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                console.log(`Downloaded ${percentCompleted}%`);
+                
+                // You can also update a progress bar here (if you have one in the UI)
+                progressBar.style.width = `${percentCompleted}%`;
+            }
+        })
+
+        console.log('Download complete');
+        progressBar.style.width = '100%'; 
+
         const breeds = breedsData.data;
 
         breeds.forEach((element) => {
@@ -45,7 +57,7 @@ interceptors();
 
         display(breeds[0]);
     } catch (err) {
-        console.error(err);
+        console.log(err);
     }
 })();
 
@@ -66,12 +78,36 @@ async function display(e) {
             header: {
                 "x-api-key": API_KEY,
             },
-        }
-    );
+            onDownloadProgress: function (progressEvent) {
+                // Calculate the progress percentage
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                console.log(`Downloaded ${percentCompleted}%`);
+                
+                // You can also update a progress bar here (if you have one in the UI)
+                progressBar.style.width = `${percentCompleted}%`;
+            }
+        })
+
+        console.log('Download complete');
+        progressBar.style.width = '100%'; 
+        
     const data = selectedBreed.data;
 
-    let description = await axios.get(`https://api.thecatapi.com/v1/breeds/${optionSelected}`)
-      description = description.data;
+    let description = await axios.get(`https://api.thecatapi.com/v1/breeds/${optionSelected}`,{
+        onDownloadProgress: function (progressEvent) {
+            // Calculate the progress percentage
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            console.log(`Downloaded ${percentCompleted}%`);
+            
+            // You can also update a progress bar here (if you have one in the UI)
+            progressBar.style.width = `${percentCompleted}%`;
+        }
+    })
+
+    console.log('Download complete');
+    progressBar.style.width = '100%'; 
+
+    description = description.data;
     
     const h3 = document.createElement("h3");
     h3.textContent = description.description;
@@ -103,6 +139,7 @@ function interceptors(){
     axios.interceptors.request.use(request => {
         request.metadata = request.metadata || {};
         request.metadata.startTime = new Date().getTime();
+        progressBar.style.width = '0%';
         return request;
     });
 
