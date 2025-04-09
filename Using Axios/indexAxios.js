@@ -27,20 +27,14 @@ const API_KEY =  "live_BICAt2EBGRp6AyCBGoX2NkPl9HJUofGc16GmMvAquuJlPH2zTmYcICeuy
  *   send it manually with all of your requests! You can also set a default base URL!
  */
 interceptors();
+
 (async function initialLoad() {
     try {
         const breedsData = await axios.get("https://api.thecatapi.com/v1/breeds", {
             headers: {
                 "x-api-key": API_KEY,
             },
-            onDownloadProgress: function (progressEvent) {
-                // Calculate the progress percentage
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                console.log(`Downloaded ${percentCompleted}%`);
-                
-                // You can also update a progress bar here (if you have one in the UI)
-                progressBar.style.width = `${percentCompleted}%`;
-            }
+            onDownloadProgress: updateProgess
         })
 
         console.log('Download complete');
@@ -78,14 +72,7 @@ async function display(e) {
             header: {
                 "x-api-key": API_KEY,
             },
-            onDownloadProgress: function (progressEvent) {
-                // Calculate the progress percentage
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                console.log(`Downloaded ${percentCompleted}%`);
-                
-                // You can also update a progress bar here (if you have one in the UI)
-                progressBar.style.width = `${percentCompleted}%`;
-            }
+            onDownloadProgress: updateProgess
         })
 
         console.log('Download complete');
@@ -94,14 +81,7 @@ async function display(e) {
     const data = selectedBreed.data;
 
     let description = await axios.get(`https://api.thecatapi.com/v1/breeds/${optionSelected}`,{
-        onDownloadProgress: function (progressEvent) {
-            // Calculate the progress percentage
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            console.log(`Downloaded ${percentCompleted}%`);
-            
-            // You can also update a progress bar here (if you have one in the UI)
-            progressBar.style.width = `${percentCompleted}%`;
-        }
+        onDownloadProgress: updateProgess
     })
 
     console.log('Download complete');
@@ -137,6 +117,7 @@ function carouseCall(url, alt, id) {
 
 function interceptors(){
     axios.interceptors.request.use(request => {
+        document.body.style.cursor = 'progress';
         request.metadata = request.metadata || {};
         request.metadata.startTime = new Date().getTime();
         progressBar.style.width = '0%';
@@ -147,7 +128,7 @@ function interceptors(){
         (response) => {
             response.config.metadata.endTime = new Date().getTime();
             response.config.metadata.durationInMS = response.config.metadata.endTime - response.config.metadata.startTime;
-
+            document.body.style.cursor = 'default';
             console.log(`Request took ${response.config.metadata.durationInMS} milliseconds.`)
             return response;
         },
@@ -177,12 +158,20 @@ function interceptors(){
  *   once or twice per request to this API. This is still a concept worth familiarizing yourself
  *   with for future projects.
  */
-
+function updateProgess(progressEvent){
+    // Calculate the progress percentage
+    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    console.log(`Downloaded ${percentCompleted}%`);
+    
+    // You can also update a progress bar here (if you have one in the UI)
+    progressBar.style.width = `${percentCompleted}%`;
+}
 /**
  * 7. As a final element of progress indication, add the following to your axios interceptors:
  * - In your request interceptor, set the body element's cursor style to "progress."
  * - In your response interceptor, remove the progress cursor style from the body element.
  */
+
 /**
  * 8. To practice posting data, we'll create a system to "favourite" certain images.
  * - The skeleton of this function has already been created for you.
